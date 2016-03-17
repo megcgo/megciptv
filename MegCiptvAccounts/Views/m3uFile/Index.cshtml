@@ -1,0 +1,52 @@
+﻿
+@{
+    ViewBag.Title = "from File upload";
+    ViewBag.m3uFile = true;
+}
+
+<div class="jumbotron">
+    <h1>from File upload</h1>
+    <p class="lead">Extract iptv Accounts (xtream-codes type) from an m3u file upload</p>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+
+@using (Html.BeginForm("Result", "m3uFile", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <i class="fa fa-picture-o fa-fw"></i> Ficheiro a carregar da @ViewBag.Title <span class="label label-default">JPG</span> <span class="label label-default">PNG</span>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <input title="Choose you file to process" type="file" name="ficheiro" />
+                <p class="help-block">.m3u file to upload and process</p>
+            </div>
+
+
+        </div>
+    </div>
+
+    <p>
+        <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-floppy-disk"></span> Upload and process file</button>
+        <a href="@Url.Action("Index","Home")" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-ban-circle"></span> Cancel and go back</a>
+    </p>
+
+
+
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
+
+
+
+
+    </div>
+</div>

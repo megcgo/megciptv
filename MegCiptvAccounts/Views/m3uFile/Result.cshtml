@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewBag.Title = "Result";
+}
+
+<div class="row">
+    <div class="col-xs-12">
+@if (!string.IsNullOrEmpty(ViewBag.erro))
+{
+    <div class="alert alert-danger alert-dismissable fade in">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <span class="glyphicon glyphicon-warning-sign"></span> @ViewBag.erro<br />
+        @Html.ValidationSummary(false)
+    </div>
+}
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-cog"></span> Links found</h3>
+            </div>
+            <div class="panel-body">
+                <a href="@ViewBag.url" target="_blank">@ViewBag.url</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <h3 class="panel-title"><span class="glyphicon glyphicon-cog"></span> Teste</h3>
+    </div>
+    <div class="panel-body">
+        Teste
+    </div>
+</div>
