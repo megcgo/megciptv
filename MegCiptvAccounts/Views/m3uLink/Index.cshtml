@@ -1,14 +1,52 @@
 ﻿@{
     ViewBag.Title = "from URL Link";
+    ViewBag.m3uLink = true;
 }
 
 <div class="jumbotron">
-    <h1>from URL Link</h1>
-    <p class="lead">Extract iptv Accounts (xtream-codes type) from an URL Link</p>
+    <h1>from Url Link</h1>
+    <p class="lead">Extract xtream-codes type Accounts from an remote file</p>
 </div>
 
 <div class="row">
     <div class="col-xs-12">
-        URL Link
+
+        @using (Html.BeginForm("Result", "m3uLink", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-file-movie-o fa-fw"></i> Link to process <span class="label label-default">.m3u</span> file</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group col-sm-6">
+                        <label for="remoteUrl" class="control-label" style="text-align:left;">Url to remote .m3u file</label>
+                        @Html.TextBox("remoteUrl", null, new { @class = "form-control", placeholder = "http://url.com/file.m3u", type = "url" })
+                        <p class="help-block">Url to remote .m3u file</p>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <p>
+                <button type="submit" class="btn btn-success" id="btnSubmit"><i class="fa fa-cloud-upload"></i> Process URL</button>
+                <a href="@Url.Action("Index","Home")" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-ban-circle"></span> Cancel and go back</a>
+            </p>
+
+
+
+        }
+
+        @section Scripts {
+            @Scripts.Render("~/bundles/jqueryval")
+        }
+
+
+
+
+
+
     </div>
 </div>

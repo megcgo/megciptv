@@ -1,12 +1,11 @@
 ﻿@model MegCiptvAccounts.Models.listaResult
 
 @{
-    ViewBag.Title = "m3uFile Result";
+    ViewBag.Title = "m3uLink Result";
     ViewBag.working = Model.ListaDados == null ? 0 : Model.ListaDados.Count(w => w.working);
     ViewBag.uniqueAccounts = Model.ListaDados == null ? 0 : Model.ListaDados.Count();
-    ViewBag.m3uFile = true;
+    ViewBag.m3uLink = true;
 }
-
 
 <div class="row">
     <div class="col-xs-12">
@@ -23,8 +22,8 @@
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
             <div class="text-center"><strong><i class="fa fa-television fa-fw"></i> HOW TO USE <i class="fa fa-television fa-fw"></i></strong></div>
             Use <button class="btn btn-default btn-xs btn-primary"><i class="fa fa-clipboard"></i> Copy</button> to copy the Account data to clipboard and then you can PASTE it to a IPVT Client that supports getting channels from .m3u link.<br />
-            Use <button class="btn btn-default btn-xs"><i class="fa fa-external-link"></i> .m3u</button> to open/save the channel list from that Account to a file and open that file in a IPVT Client of your choice.<br/>
-            <hr/>
+            Use <button class="btn btn-default btn-xs"><i class="fa fa-external-link"></i> .m3u</button> to open/save the channel list from that Account to a file and open that file in a IPVT Client of your choice.<br />
+            <hr />
             T<i class="fa fa-info-circle"></i>P: you can use <button class="btn btn-default btn-xs"><i class="fa fa-external-link"></i> .m3u</button> and when browser prompt to save/open, you choose VLC to open that type of files..
         </div>
 
@@ -87,7 +86,7 @@
                         }
                     </tbody>
                 </table>
-                <a href="@Url.Action("Index","m3uFile")" class="btn btn-default btn-block"><i class="fa fa-reply fa-fw"></i> Go back</a>
+                <a href="@Url.Action("Index","m3uLink")" class="btn btn-default btn-block"><i class="fa fa-reply fa-fw"></i> Go back</a>
             </div>
         </div>
 

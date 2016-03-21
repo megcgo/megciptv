@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using Microsoft.VisualBasic.FileIO;
+using MegCiptvAccounts.Helper;
+using MegCiptvAccounts.Models;
 
 namespace MegCiptvAccounts.Controllers
 {
     public class m3uFileController : Controller
     {
+        private readonly megciptvEntities _db = new megciptvEntities();
+
         // GET: m3uFile
         public ActionResult Index()
         {
@@ -20,53 +20,41 @@ namespace MegCiptvAccounts.Controllers
         [HttpPost]
         public ActionResult Result()
         {
-            string urlGetm3u = string.Empty;
-            
 
+            listaResult viewmodel = new listaResult();
 
-            string pathFilename;
-            string path = AppDomain.CurrentDomain.BaseDirectory + "App_Data/";
+            viewmodel.linhasProcessadas = 0;
+            List<listaDados> dummy = new List<listaDados>();
+            viewmodel.ListaDados = dummy;
+
             var requestFile = Request.Files[0];
             // apanhar só extensão do ficheiro
             var fileext = requestFile.FileName.Substring(requestFile.FileName.LastIndexOf(".") + 1);
 
-            if ((!(requestFile != null && requestFile.ContentLength > 0)) || (requestFile.ContentLength > 1048576) || (fileext.ToLower() != "m3u"))
+            if (!(requestFile.ContentLength > 0 && requestFile.ContentLength < 3145728 && fileext.ToLower().Contains("m3u")))
             {
-                ViewBag.erro = "Error loading file. Not a m3u file type!";
-                return View();
+                ViewBag.erro = "Error loading file. More than 3MB size or not an m3u file type or it has some error..!";
+                return View(viewmodel);
             }
 
-            using (var parser = new TextFieldParser(requestFile.InputStream))
+            viewmodel = new listManager().ProcessaStream(requestFile.InputStream);
+
+            foreach (var item in viewmodel.ListaDados.Where(w => w.working))
             {
-                parser.CommentTokens = new[] {"#"};
-                while (!parser.EndOfData)
+                lista paraBD = new lista
                 {
-                    var currentRow = parser.ReadLine();
+                    Server = item.servidor,
+                    Login = item.username,
+                    Pass = item.password,
+                    Data = DateTime.Today
+                };
+                _db.lista.Add(paraBD);
 
-                    if (currentRow.StartsWith("http://") && currentRow.Contains("/live/"))
-                    {
-                        string[] variasPartes = currentRow.Split('/');
-                        string servidor = variasPartes[2];
-                        string login = variasPartes[4];
-                        string pass = variasPartes[5];
-
-
-                        ViewBag.url = "http://" + servidor + "/get.php?username=" + login + "&password=" + pass +
-                                       "&type=m3u_plus&output=mpegts";
-
-                    }
-
-
-
-
-                }
             }
 
-                //pathFilename = Path.Combine(path, DateTime.Now.ToShortDateString() + "_" + DateTime.Now.Ticks.ToString() + "." + fileext);
-                //requestFile.SaveAs(pathFilename);
-                //if (System.IO.File.Exists(pathFilename)) { System.IO.File.Delete(pathFilename); }
+            _db.SaveChanges();
 
-                return View();
+            return View(viewmodel);
         }
 
 

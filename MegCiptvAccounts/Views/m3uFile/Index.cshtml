@@ -5,8 +5,8 @@
 }
 
 <div class="jumbotron">
-    <h1>from File upload</h1>
-    <p class="lead">Extract iptv Accounts (xtream-codes type) from an m3u file upload</p>
+    <h1>from local File</h1>
+    <p class="lead">Extract xtream-codes type Accounts from an m3u local file</p>
 </div>
 
 <div class="row">
@@ -18,11 +18,11 @@
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            <i class="fa fa-picture-o fa-fw"></i> Ficheiro a carregar da @ViewBag.Title <span class="label label-default">JPG</span> <span class="label label-default">PNG</span>
+            <h3 class="panel-title"><i class="fa fa-file-movie-o fa-fw"></i> File to process <span class="label label-default">.m3u</span></h3>
         </div>
         <div class="panel-body">
             <div class="form-group">
-                <input title="Choose you file to process" type="file" name="ficheiro" />
+                <input title="Choose you file to process" type="file" name="ficheiro" accept=".m3u" />
                 <p class="help-block">.m3u file to upload and process</p>
             </div>
 
@@ -31,7 +31,7 @@
     </div>
 
     <p>
-        <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-floppy-disk"></span> Upload and process file</button>
+        <button class="btn btn-success" id="btnSubmit"><i class="fa fa-cloud-upload"></i> Process file</button>
         <a href="@Url.Action("Index","Home")" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-ban-circle"></span> Cancel and go back</a>
     </p>
 
