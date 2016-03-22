@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Core.Objects;
 using System.Linq;
 using System.Web.Mvc;
 using MegCiptvAccounts.Helper;
@@ -39,20 +41,32 @@ namespace MegCiptvAccounts.Controllers
 
             viewmodel = new listManager().ProcessaStream(requestFile.InputStream);
 
+            // Add to DB --------------------------------------------------
+            List<lista> fromDB = _db.lista.Where(d => d.Data == DateTime.Today.Date).ToList();
+
             foreach (var item in viewmodel.ListaDados.Where(w => w.working))
             {
-                lista paraBD = new lista
+                lista toDB = new lista
                 {
                     Server = item.servidor,
                     Login = item.username,
                     Pass = item.password,
                     Data = DateTime.Today
                 };
-                _db.lista.Add(paraBD);
 
+                if (
+                    !fromDB.Any(
+                        a =>
+                            a.Data == toDB.Data
+                         && a.Login == toDB.Login
+                         && a.Pass == toDB.Pass
+                         && a.Server == toDB.Server)
+                   )
+                 _db.lista.Add(toDB);
             }
 
             _db.SaveChanges();
+            // /Add to DB --------------------------------------------------
 
             return View(viewmodel);
         }

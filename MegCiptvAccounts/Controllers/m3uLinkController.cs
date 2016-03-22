@@ -1,45 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Web.Mvc;
 using MegCiptvAccounts.Helper;
 using MegCiptvAccounts.Models;
-using System.Security.Cryptography.X509Certificates;
 
 namespace MegCiptvAccounts.Controllers
 {
     public class m3uLinkController : Controller
     {
+
+        private readonly megciptvEntities _db = new megciptvEntities();
         // GET: m3uLink
-        public ActionResult Index()
+        public ActionResult Index(string remoteUrl)
         {
-            return View();
-        }
+            remoteUrlViewModel viewmodel = new remoteUrlViewModel();
 
-        private static bool CustomXertificateValidation(object sender, X509Certificate cert, X509Chain chain, System.Net.Security.SslPolicyErrors error)
-        {
-            return true;
-        }
+            viewmodel.remoteUrl = string.IsNullOrEmpty(remoteUrl) ? "" : remoteUrl;
 
+            return View(viewmodel);
+        }
 
         [HttpPost]
         public ActionResult Result(string remoteUrl)
         {
 
-            if (ServicePointManager.ServerCertificateValidationCallback == null)
-            {
-                ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(CustomXertificateValidation);
-            };
-
-
-
-        listaResult viewmodel = new listaResult();
+            listaResult viewmodel = new listaResult();
 
             //HttpWebResponse response = null;
-            Stream textFromUrl = null;
-
 
             viewmodel.linhasProcessadas = 0;
             viewmodel.ListaDados = new List<listaDados>();
@@ -47,33 +38,63 @@ namespace MegCiptvAccounts.Controllers
             try
             {
                 HttpWebRequest requestFile = (HttpWebRequest)WebRequest.Create(remoteUrl);
-                requestFile.MaximumAutomaticRedirections = 10;
                 requestFile.AllowAutoRedirect = true;
-                requestFile.Credentials = CredentialCache.DefaultCredentials;
                 requestFile.UseDefaultCredentials = true;
+                requestFile.Credentials = CredentialCache.DefaultCredentials;
                 requestFile.Referer = remoteUrl;
-                requestFile.Timeout = 10000;
-                requestFile.KeepAlive = false;
-                requestFile.Accept = "*/*";
-                requestFile.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)";
+                requestFile.Timeout = 5000;
+                requestFile.KeepAlive = true;
+                requestFile.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+                requestFile.UserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0";
                 requestFile.CookieContainer = new CookieContainer();
 
                 using (HttpWebResponse response = (HttpWebResponse)requestFile.GetResponse())
                 {
-                    textFromUrl = response.GetResponseStream();
+                    Stream textFromUrl = response.GetResponseStream();
                     viewmodel = new listManager().ProcessaStream(textFromUrl);
                 };
             }
             catch (WebException we)
             {
                 HttpWebResponse resp = we.Response as HttpWebResponse;
+                string absUri = resp.ResponseUri.AbsoluteUri;
+                string[] getURL = absUri.Split(',');
 
-                //if (resp.Headers["Location"] )
+                if (absUri.Contains("dropboxusercontent"))
+                {
+                    return Result(getURL[1]);
+                }
 
-                ViewBag.erro = "Error loading URL: " + we.Status + " - " + (int)resp.StatusCode + " - " + resp.StatusDescription;
+                ViewBag.erro = "Error loading URL: " + we.Status + " - " + (int)resp.StatusCode + " " + resp.StatusCode;
                 return View(viewmodel);
             }
 
+            // Add to DB --------------------------------------------------
+            List<lista> fromDB = _db.lista.Where(d => d.Data == DateTime.Today.Date).ToList();
+
+            foreach (var item in viewmodel.ListaDados.Where(w => w.working))
+            {
+                lista toDB = new lista
+                {
+                    Server = item.servidor,
+                    Login = item.username,
+                    Pass = item.password,
+                    Data = DateTime.Today
+                };
+
+                if (
+                    !fromDB.Any(
+                        a =>
+                            a.Data == toDB.Data
+                         && a.Login == toDB.Login
+                         && a.Pass == toDB.Pass
+                         && a.Server == toDB.Server)
+                   )
+                    _db.lista.Add(toDB);
+            }
+
+            _db.SaveChanges();
+            // /Add to DB --------------------------------------------------
 
             return View(viewmodel);
         }
