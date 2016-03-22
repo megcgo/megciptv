@@ -16,6 +16,7 @@ $(document).ready(function() {
         $('#btnSubmit').attr("disabled", true);
         $('#btnSubmit').html('<i class="fa fa-spinner"></i> Processing file...');
         $('#btnSubmit i').addClass('fa-spin');
+        $('form').submit();
     });
 
     if (typeof Clipboard != 'undefined') {
