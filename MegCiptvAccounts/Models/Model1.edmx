@@ -31,7 +31,7 @@
           <Property Name="Server" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Name="Login" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Name="Pass" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="Data" Type="DateTime" />
+          <Property Name="Data" Type="DateTime" Nullable="true" />
         </EntityType>
         <EntityContainer Name="megciptvEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="lista" EntityType="Self.lista" />

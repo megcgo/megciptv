@@ -6,8 +6,11 @@
 *.user
 *.userosscache
 *.sln.docstates
+Web.Debug.config
+Web.Release.config
 
-# User-specific files (MonoDevelop/Xamarin Studio)
+
+p# User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
 # Build results
@@ -136,7 +139,7 @@ publish/
 ## TODO: Comment the next line if you want to checkin your
 ## web deploy settings but do note that will include unencrypted
 ## passwords
-#*.pubxml
+*.pubxml
 
 *.publishproj
 
